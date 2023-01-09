@@ -1,3 +1,6 @@
 /.idea/
 /.target/
 /albanoi-commands/.idea/
+/albanoi-commands/target/
+/albanoi-queries/.idea/
+/albanoi-queries/target/
