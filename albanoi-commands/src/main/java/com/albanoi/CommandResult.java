@@ -4,7 +4,7 @@ import java.util.Optional;
 
 public class CommandResult<T> {
 
-    private Optional<T> result;
+    private final Optional<T> result;
 
     public CommandResult(T result) {
         this.result = Optional.ofNullable(result);

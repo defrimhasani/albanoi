@@ -5,7 +5,7 @@ import org.junit.jupiter.api.Test;
 
 class CommandTest {
     static class CreateUserCommand implements Command {
-        private String username;
+        private final String username;
         public CreateUserCommand(String username){
             this.username = username;
         }
