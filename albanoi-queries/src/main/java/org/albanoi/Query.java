@@ -1,4 +1,4 @@
-package org.example;
+package org.albanoi;
 
 public interface Query {
 }

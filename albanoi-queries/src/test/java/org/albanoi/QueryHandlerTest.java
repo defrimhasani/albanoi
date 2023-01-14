@@ -1,4 +1,4 @@
-package org.example;
+package org.albanoi;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
