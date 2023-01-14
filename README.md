@@ -1,5 +1,7 @@
 ## Simplifying CQRS with Albanoi
 
+![example workflow](https://github.com/defrimhasani/albanoi/actions/workflows/maven.yml/badge.svg)
+
 ### Overview
 
 Albanoi is an open-source library designed to assist Spring developers in implementing the Command-Query Responsibility Segregation (CQRS) pattern in their applications. The CQRS pattern is an architectural pattern that separates the responsibilities of handling command and query operations, allowing for more flexibility and scalability in an application's architecture.
