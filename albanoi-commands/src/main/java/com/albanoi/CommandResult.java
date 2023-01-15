@@ -14,7 +14,7 @@ public class CommandResult<T> {
         return new CommandResult(null);
     }
 
-    public static <P> CommandResult of(P t){
+    public static <P> CommandResult<P> of(P t){
         return new CommandResult(t);
     }
 

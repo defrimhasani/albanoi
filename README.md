@@ -10,7 +10,7 @@ The library provides a set of annotations and utility classes that help to simpl
 It allows developers to easily define command and query handlers.
 
 
-### Commands
+### Commands 📝
 
 In the Command-Query Responsibility Segregation (CQRS) pattern, commands represent the operations that change the state of the system. They are typically used to create, update, or delete data within an application. A command is often represented by a message or a request that contains the data needed to execute the operation.
 
@@ -34,10 +34,39 @@ class CreateUserCommandHandler implements CommandHandler<CreateUserCommand, User
 ```
 The `CommandHandler` interface has two generic parameters, where the first one is the command class itself, and the second is the command result which will be returned inside the `CommandResult` class.
 
-### Queries
+### Queries 📖
 
 In the Command-Query Responsibility Segregation (CQRS) pattern, queries represent the operations that retrieve data from the system. They are typically used to read or retrieve data within an application, and are typically represented by a message or a request that contains the data needed to execute the operation.
 
+
+### Examples
+
+👉How to execute commands from my rest controller?
+```java
+@RestController
+@RequestMapping("/users")
+public class UsersController {
+
+    private final AlbanoiGateway albanoiGateway;
+
+    public UsersController(AlbanoiGateway albanoiGateway) {
+        this.albanoiGateway = albanoiGateway;
+    }
+
+    @PostMapping
+    public ResponseEntity<User> createUser(@RequestBody CreateUserRequest createUserRequest) {
+
+        // Commands are part of your domain
+        var createUserCommand = new CreateUserCommand();
+        createUserCommand.setUsername(createUserRequest.getUsername());
+
+        // You don't need to inject the handler itself, let the gateway handle it 😊
+        CommandResult<User> createUserResult = albanoiGateway.execute(createUserCommand, User.class);
+
+        return ResponseEntity.ok(createUserResult.getResult());
+    }
+}
+```
 
 
 
