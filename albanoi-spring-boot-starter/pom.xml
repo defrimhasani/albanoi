@@ -6,14 +6,15 @@
 
     <groupId>com.defrimhsn</groupId>
     <artifactId>albanoi-spring-boot-starter</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <version>0.0.1</version>
 
     <properties>
         <maven.compiler.source>17</maven.compiler.source>
         <maven.compiler.target>17</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <albanoi.commands.version>1.0-SNAPSHOT</albanoi.commands.version>
+        <albanoi.commands.version>0.0.1</albanoi.commands.version>
         <spring.boot.version>3.0.1</spring.boot.version>
+        <maven.source.pluin>3.2.1</maven.source.pluin>
     </properties>
 
     <dependencies>
@@ -29,6 +30,22 @@
         </dependency>
     </dependencies>
 
-
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-source-plugin</artifactId>
+                <version>${maven.source.pluin}</version>
+                <executions>
+                    <execution>
+                        <id>attach-sources</id>
+                        <goals>
+                            <goal>jar-no-fork</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
 
 </project>
