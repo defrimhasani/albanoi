@@ -21,21 +21,24 @@ import java.util.Optional;
 import java.util.function.BiConsumer;
 import java.util.function.Predicate;
 
+/**
+ * The default gateway uses the @{@link ApplicationContext} in order to find registered handlers
+ * <p>
+ * If there are no handlers for the given command of query then the gateway will throw a {@link MissingHandlerException}
+ * <p>
+ * If there are multiple handlers, then an instance of {@link MultipleHandlersForCommandException} will be thrown
+ * <p>
+ * If the handler is found then the command will be executed using the {@link CommandHandler} interface
+ */
 public class DefaultAlbanoiGateway implements AlbanoiGateway {
 
     @Autowired
     private ApplicationContext applicationContext;
 
-    Logger logger = LoggerFactory.getLogger(DefaultAlbanoiGateway.class);
+    private final Logger logger = LoggerFactory.getLogger(DefaultAlbanoiGateway.class);
 
     @Override
     public <R, C extends Command> CommandResult<R> execute(C command, Class<R> resultType) {
-
-        StopWatch stopWatch = new StopWatch();
-
-        if (logger.isTraceEnabled()) {
-            stopWatch.start();
-        }
 
         logger.trace("Looking for registered command handlers for the following generic parameters {}, {}", command.getClass(), resultType);
 
@@ -60,12 +63,6 @@ public class DefaultAlbanoiGateway implements AlbanoiGateway {
         CommandHandler<C, R> handler = (CommandHandler<C, R>) applicationContext.getBean(handlerName);
 
         CommandResult<R> executionResult = handler.execute(command);
-
-        if (logger.isTraceEnabled()) {
-            stopWatch.stop();
-        }
-
-        logger.trace("Execution of '{}' took {} millis", command, stopWatch.getTotalTimeMillis());
 
         return executionResult;
     }
