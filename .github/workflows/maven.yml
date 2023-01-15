@@ -25,3 +25,5 @@ jobs:
       run: mvn clean install --file "albanoi-queries/pom.xml"
     - name: Build Albanoi Spring Boot Starter
       run: mvn clean install --file "albanoi-spring-boot-starter/pom.xml"
+    - name: Build Spring Boot Sample
+      run: mvn clean install --file "samples/spring-boot-sample/pom.xml"
