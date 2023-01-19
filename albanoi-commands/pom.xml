@@ -138,10 +138,6 @@
                             <useReleaseProfile>false</useReleaseProfile>
                             <releaseProfiles>release</releaseProfiles>
                             <goals>deploy</goals>
-                            <checkModificationExcludes>
-                                <checkModificationExclude>pom.xml</checkModificationExclude>
-                                <checkModificationExclude>**</checkModificationExclude>
-                            </checkModificationExcludes>
                         </configuration>
                     </plugin>
                 </plugins>
