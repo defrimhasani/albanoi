@@ -13,6 +13,7 @@
         <maven.compiler.target>17</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <albanoi.commands.version>0.0.1</albanoi.commands.version>
+        <albanoi.queries.version>0.0.1</albanoi.queries.version>
         <spring.boot.version>3.0.1</spring.boot.version>
         <maven.source.pluin>3.2.1</maven.source.pluin>
     </properties>
@@ -22,6 +23,11 @@
             <groupId>com.defrimhsn</groupId>
             <artifactId>albanoi-commands</artifactId>
             <version>${albanoi.commands.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.defrimhsn</groupId>
+            <artifactId>albanoi-queries</artifactId>
+            <version>${albanoi.queries.version}</version>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>

@@ -2,7 +2,7 @@ package com.example.springbootsample.commands;
 
 import com.albanoi.CommandResult;
 import com.albanoi.spring.gateway.AlbanoiGateway;
-import com.albanoi.spring.gateway.exceptions.MultipleHandlersForCommandException;
+import com.albanoi.spring.gateway.exceptions.MultipleHandlersException;
 import com.example.springbootsample.models.User;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -38,7 +38,7 @@ class CommandTests {
 
         var deleteUserCommand = new DeleteUserCommand();
 
-        assertThrows(MultipleHandlersForCommandException.class,
+        assertThrows(MultipleHandlersException.class,
                 () -> albanoiGateway.execute(deleteUserCommand, String.class));
     }
 

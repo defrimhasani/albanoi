@@ -38,6 +38,25 @@ The `CommandHandler` interface has two generic parameters, where the first one i
 
 In the Command-Query Responsibility Segregation (CQRS) pattern, queries represent the operations that retrieve data from the system. They are typically used to read or retrieve data within an application, and are typically represented by a message or a request that contains the data needed to execute the operation.
 
+You can create a query by implementing the `Query` interface.
+``` java
+public record GetUserByIdQuery(UUID id) implements Query {
+
+}
+```
+
+The query itself contains only data that the handler needs.
+You can create a handler by implementing the `QueryHandler` interface
+
+```java
+@Component
+public class GetUserByIdQueryHandler implements QueryHandler<GetUserByIdQuery, User> {
+    @Override
+    public User handle(GetUserByIdQuery query) {
+        return new User("user");
+    }
+}
+```
 
 ### Examples
 
@@ -67,7 +86,28 @@ public class UsersController {
     }
 }
 ```
+👉How to execute queries from my rest controller?
+```java
+@RestController
+@RequestMapping("/users")
+public class UsersController {
 
+    private final AlbanoiGateway albanoiGateway;
+
+    public UsersController(AlbanoiGateway albanoiGateway) {
+        this.albanoiGateway = albanoiGateway;
+    }
+    
+    @GetMapping("{id}")
+    public ResponseEntity<User> findUser(@PathVariable UUID id){
+
+        GetUserByIdQuery getUserByIdQuery = new GetUserByIdQuery(id);
+        User user = albanoiGateway.handle(getUserByIdQuery, User.class);
+
+        return ResponseEntity.ok(user);
+    }
+}
+```
 
 
 
