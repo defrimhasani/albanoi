@@ -4,11 +4,11 @@ import com.albanoi.CommandResult;
 import com.albanoi.spring.gateway.AlbanoiGateway;
 import com.example.springbootsample.commands.CreateUserCommand;
 import com.example.springbootsample.models.User;
+import com.example.springbootsample.queries.GetUserByIdQuery;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/users")
@@ -29,6 +29,15 @@ public class UsersController {
         CommandResult<User> createUserResult = albanoiGateway.execute(createUserCommand, User.class);
 
         return ResponseEntity.ok(createUserResult.getResult());
+
+    }
+    @GetMapping("{id}")
+    public ResponseEntity<User> findUser(@PathVariable UUID id){
+
+        GetUserByIdQuery getUserByIdQuery = new GetUserByIdQuery(id);
+        User user = albanoiGateway.handle(getUserByIdQuery, User.class);
+
+        return ResponseEntity.ok(user);
 
     }
 }
