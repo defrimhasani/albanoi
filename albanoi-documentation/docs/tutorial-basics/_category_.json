@@ -1,8 +1,8 @@
 {
-  "label": "Tutorial - Basics",
+  "label": "Commands",
   "position": 2,
   "link": {
     "type": "generated-index",
-    "description": "5 minutes to learn the most important Docusaurus concepts."
+    "description": "In the Command-Query Responsibility Segregation (CQRS) pattern, commands represent the operations that change the state of the system. They are typically used to create, update, or delete data within an application. A command is often represented by a message or a request that contains the data needed to execute the operation."
   }
 }
