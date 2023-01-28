@@ -1,0 +1,8 @@
+{
+  "label": "Queries",
+  "position": 3,
+  "link": {
+    "type": "generated-index",
+    "description": "In the Command-Query Responsibility Segregation (CQRS) pattern, queries represent the operations that retrieve data from the system. They are typically used to read or retrieve data within an application, and are typically represented by a message or a request that contains the data needed to execute the operation."
+  }
+}

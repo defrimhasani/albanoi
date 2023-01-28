@@ -7,7 +7,7 @@ const darkCodeTheme = require('prism-react-renderer/themes/dracula');
 /** @type {import('@docusaurus/types').Config} */
 const config = {
   title: 'Albanoi',
-  tagline: 'Simplifying CQRS ',
+  tagline: 'Simplifying CQRS ✍️📖',
   favicon: 'img/favicon.ico',
 
   // Set the production url of your site here
@@ -42,14 +42,14 @@ const config = {
           // Please change this to your repo.
           // Remove this to remove the "edit this page" links.
           editUrl:
-            'https://github.com/defrimhasani/albanoi/tree/main/albanoi-documentation/docs',
+            'https://github.com/defrimhasani/albanoi/tree/main/albanoi-documentation/',
         },
         blog: {
           showReadingTime: true,
           // Please change this to your repo.
           // Remove this to remove the "edit this page" links.
           editUrl:
-            'https://github.com/defrimhasani/albanoi/tree/main/albanoi-documentation/blog',
+            'https://github.com/defrimhasani/albanoi/tree/main/albanoi-documentation/',
         },
         theme: {
           customCss: require.resolve('./src/css/custom.css'),
@@ -128,6 +128,7 @@ const config = {
       prism: {
         theme: lightCodeTheme,
         darkTheme: darkCodeTheme,
+        additionalLanguages: ['java']
       },
     }),
 };

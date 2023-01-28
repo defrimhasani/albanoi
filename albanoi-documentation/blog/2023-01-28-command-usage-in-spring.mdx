@@ -1,0 +1,35 @@
+---
+slug: command-usage-in-spring
+title: Execute commands from a Rest Controller
+authors: [defrim]
+tags: [spring-boot]
+---
+
+:::tip
+
+You can [clone](https://github.com/defrimhasani/albanoi/tree/main/samples/spring-boot-sample "title") an already prepared sample
+which is built on top of spring boot using the spring boot starter library.
+:::
+
+
+```java title="src/adapters/rest/UsersController.java"
+@RestController
+@RequestMapping("/users")
+public class UsersController {
+
+    private final AlbanoiGateway albanoiGateway;
+
+    public UsersController(AlbanoiGateway albanoiGateway) {
+        this.albanoiGateway = albanoiGateway;
+    }
+
+    @GetMapping("{id}")
+    public ResponseEntity<User> findUser(@PathVariable UUID id){
+
+        GetUserByIdQuery getUserByIdQuery = new GetUserByIdQuery(id);
+        User user = albanoiGateway.handle(getUserByIdQuery, User.class);
+
+        return ResponseEntity.ok(user);
+    }
+}
+```
