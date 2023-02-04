@@ -1,0 +1,21 @@
+---
+slug: where-albanoi-fits
+title: Where does Albanoi fit in?
+authors: [defrim]
+tags: [spring-boot]
+---
+
+
+It does not matter if you are using a Rest API or any other way of data input i.e. kafka consumers.
+Albanoi cares only what's in your domain layer.
+
+Below you can see two different scenarios where albanoi works as designed.
+
+When you have a rest controller, which is used to execute http requests
+against our application that controller can prepare the domain commands and execute them
+using the albanoi gateway. The gateway itself will find the registered handler for you command and
+return the handler result.
+
+The same can be done using a kafka consumer, once you deserialize the message
+you can prepare your domain command and execute it, similar to rest controllers.
+![img alt](/img/where-albanoi-fits/rest-and-kafka-with-albanoi.png)
