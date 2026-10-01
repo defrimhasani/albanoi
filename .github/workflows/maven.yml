@@ -2,28 +2,29 @@ name: Java CI with Maven
 
 on:
   push:
-    branches: [ "main" ]
+    branches: [main]
   pull_request:
-    branches: [ "main" ]
+    branches: [main]
+
+permissions:
+  contents: read
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
-
+    strategy:
+      matrix:
+        java: ['17', '21', '25']
     steps:
-    - uses: actions/checkout@v3
-    - name: Set up JDK 17
-      uses: actions/setup-java@v3
-      with:
-        java-version: '17'
-        distribution: 'temurin'
-        cache: maven
-    - name: Build Albanoi Commands
-      run: mvn clean install --file "albanoi-commands/pom.xml"
-    - name: Build Albanoi Queries
-      run: mvn clean install --file "albanoi-queries/pom.xml"
-    - name: Build Albanoi Spring Boot Starter
-      run: mvn clean install --file "albanoi-spring-boot-starter/pom.xml"
-    - name: Build Spring Boot Sample
-      run: mvn clean install --file "samples/spring-boot-sample/pom.xml"
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+      - name: Set up JDK ${{ matrix.java }}
+        uses: actions/setup-java@de7274f081f381c8f8158605e0321c36c376e2e6 # v6
+        with:
+          java-version: ${{ matrix.java }}
+          distribution: temurin
+          cache: maven
+      - name: Build and test all modules
+        run: ./mvnw --batch-mode --no-transfer-progress clean verify
+      - name: Verify publication artifacts without signing or uploading
+        if: matrix.java == '17'
+        run: ./mvnw --batch-mode --no-transfer-progress -Ppublication -Dgpg.skip=true -pl albanoi-commands,albanoi-queries,albanoi-spring-boot-starter -am verify

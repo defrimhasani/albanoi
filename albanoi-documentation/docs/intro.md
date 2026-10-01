@@ -18,7 +18,17 @@ the library on the classpath.
 <dependency>
     <groupId>com.defrimhsn</groupId>
     <artifactId>albanoi-spring-boot-starter</artifactId>
+    <version>0.0.2</version>
 </dependency>
 ```
 
 Once the library is in your classpath, albanoi will register its `AlbanoiGateway` using Spring Boot's autoconfiguration.
+
+`0.0.2` is the latest published version. The refreshed repository is preparing
+`0.0.3-SNAPSHOT`, using Java 17+ and Spring Boot 3.5.16. To try it before publication,
+run `./mvnw clean install` at the repository root and use `0.0.3-SNAPSHOT` in your dependency.
+
+Register each command or query handler as a Spring bean (for example, with `@Component`).
+Exactly one handler must match both the message type and the requested result type.
+The development starter also allows you to replace the default gateway by providing
+your own `AlbanoiGateway` bean.

@@ -10,12 +10,12 @@ public class CommandResult<T> {
         this.result = Optional.ofNullable(result);
     }
 
-    public static CommandResult noResult() {
-        return new CommandResult(null);
+    public static <T> CommandResult<T> noResult() {
+        return new CommandResult<>(null);
     }
 
     public static <P> CommandResult<P> of(P t){
-        return new CommandResult(t);
+        return new CommandResult<>(t);
     }
 
     public boolean hasResult() {

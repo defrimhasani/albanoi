@@ -1,117 +1,125 @@
-## Simplifying CQRS with Albanoi
+# Albanoi — lightweight CQRS for Spring Boot
 
-![example workflow](https://github.com/defrimhasani/albanoi/actions/workflows/maven.yml/badge.svg)
+[![Java CI](https://github.com/defrimhasani/albanoi/actions/workflows/maven.yml/badge.svg)](https://github.com/defrimhasani/albanoi/actions/workflows/maven.yml)
+[![Documentation](https://github.com/defrimhasani/albanoi/actions/workflows/documentation.yml/badge.svg)](https://github.com/defrimhasani/albanoi/actions/workflows/documentation.yml)
 
-### Overview
+Albanoi separates commands (writes) from queries (reads) with small Java interfaces and a Spring Boot gateway that finds your handlers. It is an in-process dispatcher, not a message broker, event store, or persistence framework.
 
-Albanoi is an open-source library designed to assist Spring developers in implementing the Command-Query Responsibility Segregation (CQRS) pattern in their applications. The CQRS pattern is an architectural pattern that separates the responsibilities of handling command and query operations, allowing for more flexibility and scalability in an application's architecture.
+## Versions and requirements
 
-The library provides a set of annotations and utility classes that help to simplify the implementation of CQRS in Spring applications.
-It allows developers to easily define command and query handlers.
+- **Latest published version:** `0.0.2`, available from Maven Central.
+- **Development version:** `0.0.3-SNAPSHOT` (build locally; not yet published).
+- **Development baseline:** Java 17+, Maven 3.9+, Spring Boot 3.5.16.
+- **Documentation tooling:** Node.js 22+; CI uses Node.js 24.
 
+The refresh keeps the existing packages and gateway methods. Commands remain in `com.albanoi`; queries remain in `org.albanoi` for compatibility. See [CHANGELOG.md](CHANGELOG.md) for unreleased changes and [the documentation](https://albanoi.defrimhsn.com) for more examples.
 
-### Commands 📝
+## Install
 
-In the Command-Query Responsibility Segregation (CQRS) pattern, commands represent the operations that change the state of the system. They are typically used to create, update, or delete data within an application. A command is often represented by a message or a request that contains the data needed to execute the operation.
+For the currently published library:
 
-You can create a command by implementing the `Command` interface.
-``` java
-class CreateUserCommand implements Command {
-        public String username;
-}
+```xml
+<dependency>
+    <groupId>com.defrimhsn</groupId>
+    <artifactId>albanoi-spring-boot-starter</artifactId>
+    <version>0.0.2</version>
+</dependency>
 ```
-The command itself contains only information that the handler needs to do something with it.
 
-You can create a handler by implementing the `CommandHandler` interface, which looks like this
+To try the refreshed development version, clone this repository, run `./mvnw clean install`, and use `0.0.3-SNAPSHOT` instead. The starter includes both core modules and auto-configures an `AlbanoiGateway`. In the development version, a gateway bean you provide replaces the default.
+
+## Commands
+
 ```java
-class CreateUserCommandHandler implements CommandHandler<CreateUserCommand, User> {
+import com.albanoi.Command;
+import com.albanoi.CommandHandler;
+import com.albanoi.CommandResult;
+import org.springframework.stereotype.Component;
 
-        @Override
-        public CommandResult<User> execute(CreateUserCommand command) {
-            return CommandResult.of(new User(command.username));
-        }
+public record CreateUserCommand(String username) implements Command {}
+
+@Component
+public class CreateUserCommandHandler implements CommandHandler<CreateUserCommand, User> {
+    @Override
+    public CommandResult<User> execute(CreateUserCommand command) {
+        return CommandResult.of(new User(command.username()));
     }
-```
-The `CommandHandler` interface has two generic parameters, where the first one is the command class itself, and the second is the command result which will be returned inside the `CommandResult` class.
-
-### Queries 📖
-
-In the Command-Query Responsibility Segregation (CQRS) pattern, queries represent the operations that retrieve data from the system. They are typically used to read or retrieve data within an application, and are typically represented by a message or a request that contains the data needed to execute the operation.
-
-You can create a query by implementing the `Query` interface.
-``` java
-public record GetUserByIdQuery(UUID id) implements Query {
-
 }
 ```
 
-The query itself contains only data that the handler needs.
-You can create a handler by implementing the `QueryHandler` interface
+Put each public type in its own file. For commands without a return value, use `CommandHandler<MyCommand, Void>` and return `CommandResult.noResult()`.
+
+## Queries
 
 ```java
+import org.albanoi.Query;
+import org.albanoi.QueryHandler;
+import org.springframework.stereotype.Component;
+import java.util.UUID;
+
+public record GetUserByIdQuery(UUID id) implements Query {}
+
 @Component
 public class GetUserByIdQueryHandler implements QueryHandler<GetUserByIdQuery, User> {
     @Override
     public User handle(GetUserByIdQuery query) {
+        // Look up the user in your repository here.
         return new User("user");
     }
 }
 ```
 
-### Examples
+## Dispatch from a controller
 
-👉How to execute commands from my rest controller?
 ```java
 @RestController
 @RequestMapping("/users")
 public class UsersController {
+    private final AlbanoiGateway gateway;
 
-    private final AlbanoiGateway albanoiGateway;
-
-    public UsersController(AlbanoiGateway albanoiGateway) {
-        this.albanoiGateway = albanoiGateway;
+    public UsersController(AlbanoiGateway gateway) {
+        this.gateway = gateway;
     }
 
     @PostMapping
-    public ResponseEntity<User> createUser(@RequestBody CreateUserRequest createUserRequest) {
-
-        // Commands are part of your domain
-        var createUserCommand = new CreateUserCommand();
-        createUserCommand.setUsername(createUserRequest.getUsername());
-
-        // You don't need to inject the handler itself, let the gateway handle it 😊
-        CommandResult<User> createUserResult = albanoiGateway.execute(createUserCommand, User.class);
-
-        return ResponseEntity.ok(createUserResult.getResult());
+    public User create(@RequestBody CreateUserRequest request) {
+        return gateway.execute(new CreateUserCommand(request.username()), User.class).getResult();
     }
-}
-```
-👉How to execute queries from my rest controller?
-```java
-@RestController
-@RequestMapping("/users")
-public class UsersController {
 
-    private final AlbanoiGateway albanoiGateway;
-
-    public UsersController(AlbanoiGateway albanoiGateway) {
-        this.albanoiGateway = albanoiGateway;
-    }
-    
-    @GetMapping("{id}")
-    public ResponseEntity<User> findUser(@PathVariable UUID id){
-
-        GetUserByIdQuery getUserByIdQuery = new GetUserByIdQuery(id);
-        User user = albanoiGateway.handle(getUserByIdQuery, User.class);
-
-        return ResponseEntity.ok(user);
+    @GetMapping("/{id}")
+    public User find(@PathVariable UUID id) {
+        return gateway.handle(new GetUserByIdQuery(id), User.class);
     }
 }
 ```
 
+The examples assume your own `User` and `CreateUserRequest` types. Register handlers as Spring beans in your application's component scan. Exactly one handler must match the **message class and result class**. Missing handlers throw `MissingHandlerException`; duplicates throw `MultipleHandlersException`. Handlers execute synchronously, and their exceptions propagate to the caller.
 
+## Build and test
 
+```sh
+./mvnw clean verify
+```
 
+The root Maven reactor builds both core libraries, the starter, and the sample together. CI runs on Java 17, 21, and 25.
 
+Run the packaged sample after building:
 
+```sh
+java -jar samples/spring-boot-sample/target/spring-boot-sample-0.0.3-SNAPSHOT.jar
+```
 
+Build the documentation:
+
+```sh
+cd albanoi-documentation
+npm ci
+npm run typecheck
+npm run build
+```
+
+See [RELEASING.md](RELEASING.md) for Maven Central publication. Ordinary builds and CI do not publish library artifacts.
+
+## License
+
+[Apache License 2.0](LICENSE).
