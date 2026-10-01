@@ -74,7 +74,7 @@ public class DefaultAlbanoiGateway implements AlbanoiGateway {
         }
 
         if (registeredQueryHandlers.length > 1) {
-            logger.error("Looks like on your application there are multiple command handlers for {}", query.getClass());
+            logger.error("Looks like on your application there are multiple query handlers for {}", query.getClass());
             throw new MultipleHandlersException(query, registeredQueryHandlers);
         }
 

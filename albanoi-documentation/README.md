@@ -1,41 +1,22 @@
-# Website
+# Albanoi documentation
 
-This website is built using [Docusaurus 2](https://docusaurus.io/), a modern static website generator.
+Built with [Docusaurus 2](https://docusaurus.io/). Use Node.js 22+; CI uses Node.js 24.
 
-### Installation
+The documentation dependency migration is deferred; the existing package versions
+and lockfile are retained until a replacement can be generated and validated.
 
-```
-$ yarn
-```
-
-### Local Development
-
-```
-$ yarn start
+```sh
+npm ci
+npm start
 ```
 
-This command starts a local development server and opens up a browser window. Most changes are reflected live without having to restart the server.
+Validate and build:
 
-### Build
-
-```
-$ yarn build
-```
-
-This command generates static content into the `build` directory and can be served using any static contents hosting service.
-
-### Deployment
-
-Using SSH:
-
-```
-$ USE_SSH=true yarn deploy
+```sh
+npm run typecheck
+npm run build
 ```
 
-Not using SSH:
-
-```
-$ GIT_USER=<Your GitHub username> yarn deploy
-```
-
-If you are using GitHub pages for hosting, this command is a convenient way to build the website and push to the `gh-pages` branch.
+The production site is generated in `build/`. Pull requests build and typecheck
+the documentation without deploying it. Pushes to `main` deploy to the existing
+Cloudflare Pages project `albanoi` using `CF_API_TOKEN` and `CF_ACCOUNT_ID` repository secrets.

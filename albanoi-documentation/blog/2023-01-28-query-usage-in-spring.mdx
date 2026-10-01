@@ -11,6 +11,7 @@ You can [clone](https://github.com/defrimhasani/albanoi/tree/main/samples/spring
 which is built on top of spring boot using the spring boot starter library.
 :::
 
+<!-- truncate -->
 
 ```java title="src/adapters/rest/UsersController.java"
 @RestController
@@ -23,17 +24,13 @@ public class UsersController {
         this.albanoiGateway = albanoiGateway;
     }
 
-    @PostMapping
-    public ResponseEntity<User> createUser(@RequestBody CreateUserRequest createUserRequest) {
+    @GetMapping("/{id}")
+    public ResponseEntity<User> findUser(@PathVariable("id") UUID id) {
 
-        // Commands are part of your domain
-        var createUserCommand = new CreateUserCommand();
-        createUserCommand.setUsername(createUserRequest.getUsername());
+        GetUserByIdQuery getUserByIdQuery = new GetUserByIdQuery(id);
+        User user = albanoiGateway.handle(getUserByIdQuery, User.class);
 
-        // You don't need to inject the handler itself, let the gateway handle it 😊
-        CommandResult<User> createUserResult = albanoiGateway.execute(createUserCommand, User.class);
-
-        return ResponseEntity.ok(createUserResult.getResult());
+        return ResponseEntity.ok(user);
     }
 }
 ```

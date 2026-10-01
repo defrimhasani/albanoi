@@ -3,13 +3,15 @@ package com.albanoi.spring.autoconfigure;
 import com.albanoi.spring.gateway.AlbanoiGateway;
 import com.albanoi.spring.gateway.DefaultAlbanoiGateway;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
+import org.springframework.boot.autoconfigure.AutoConfiguration;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 
 
-@Configuration
+@AutoConfiguration
 public class AlbanoiAutoConfiguration {
 
     @Bean
+    @ConditionalOnMissingBean(AlbanoiGateway.class)
     public AlbanoiGateway albanoiGateway(){
         return new DefaultAlbanoiGateway();
     }

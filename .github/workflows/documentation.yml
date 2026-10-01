@@ -2,31 +2,37 @@ name: Build and Deploy Docs
 
 on:
   push:
-    branches:
-      - main
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
 
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
-
+    defaults:
+      run:
+        working-directory: albanoi-documentation
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
-
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
       - name: Setup Node.js
-        uses: actions/setup-node@v2
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7
         with:
-          node-version: 18
-      - name: Change directory
-        run: cd albanoi-documentation && npm ci
-
+          node-version: '24'
+          cache: npm
+          cache-dependency-path: albanoi-documentation/package-lock.json
+      - name: Install dependencies
+        run: npm ci
+      - name: Typecheck documentation
+        run: npm run typecheck
       - name: Build documentation
-        run: cd albanoi-documentation && npm run build
-
+        run: npm run build
       - name: Publish
-        uses: cloudflare/pages-action@v1
+        if: github.event_name == 'push'
+        uses: cloudflare/wrangler-action@953926a2e2182532811c01a25e53647d93bf07c0 # v4
         with:
           apiToken: ${{ secrets.CF_API_TOKEN }}
           accountId: ${{ secrets.CF_ACCOUNT_ID }}
-          projectName: albanoi
-          directory: albanoi-documentation/build
+          command: pages deploy albanoi-documentation/build --project-name=albanoi --branch=main
